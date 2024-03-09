@@ -27,3 +27,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.eslintignore
+.eslintrc.js
+.prettierignore
+tsconfig.json
+vite.config.ts
+config/CSSStub.js

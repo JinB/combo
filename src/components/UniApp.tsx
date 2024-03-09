@@ -8,8 +8,10 @@ import { UniAppContext } from './UniAppProvider'
 import { Alert } from './Alert'
 import './UniApp.css'
 
-// Original source: http://universities.hipolabs.com/search?country=Czech+Republic&name=
-const backendUrl = 'https://combo.4dates.net/v1/uni-cz'
+const backendUrl =
+    location.hostname === 'localhost'
+        ? 'http://universities.hipolabs.com/search?country=Czech+Republic&name='
+        : 'https://combo.4dates.net/v1/uni-cz'
 
 interface IUniAppFormInputs {
     name: string
@@ -67,9 +69,7 @@ const UniApp = () => {
                             style={{ width: '100%' }}
                             variant="standard"
                             placeholder="Name"
-                            helperText={
-                                !!errors.name ? errors.name.message : ''
-                            }
+                            helperText={!!errors.name ? errors.name.message : ''}
                             autoFocus={true}
                             error={!!errors.name}
                             {...field}
@@ -93,10 +93,7 @@ const UniApp = () => {
                                 openOnFocus
                                 selectOnFocus
                                 options={data.map((option: any) => option.name)}
-                                isOptionEqualToValue={(
-                                    option: any,
-                                    value: any,
-                                ) => {
+                                isOptionEqualToValue={(option: any, value: any) => {
                                     return option.name === value.name
                                 }}
                                 getOptionLabel={(option: any) => {
@@ -111,9 +108,7 @@ const UniApp = () => {
                                         variant="standard"
                                         {...params}
                                         label="University"
-                                        helperText={
-                                            !!errors.uni && errors.uni.message
-                                        }
+                                        helperText={!!errors.uni && errors.uni.message}
                                         error={!!errors.uni}
                                     />
                                 )}
