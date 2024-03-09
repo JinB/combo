@@ -1,4 +1,4 @@
-# soficticated ComboBox demo
+# Sophisticated ComboBox demo
 
 ## The task
 
@@ -10,11 +10,8 @@
 Requirements: Usage of TypeScript, React Hook Form, Axios, TanStack Query
 
 ## The solution
-TypeScript, React v18.2, TanStack Query, Axios, React Hook Form, Material UI v5
-
-https://combo.4dates.net/
+Tech stack: TypeScript, React v18.2, TanStack Query, Axios, React Hook Form, Material UI v5
+Live demo: https://combo.4dates.net/
 
 ## Installation
-run
-npx create-vite-react combo
-and clone this repository
+run 'npx create-vite-react', remove 'src', 'node_modules' folders, clone this repository and run 'npm i'
