@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { useForm, Controller, SubmitHandler } from 'react-hook-form'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
@@ -19,7 +19,8 @@ interface IUniAppFormInputs {
 }
 const UniApp1 = () => {
     const { state, actions } = useContext(UniAppContext)
-    const submitRef = useRef(null)
+    const [uniChanged, setUniChanged] = useState(false)
+
     const {
         control,
         handleSubmit,
@@ -37,6 +38,7 @@ const UniApp1 = () => {
         actions.setInfo({ name: formData.name, uni: formData.uni })
         setValue('name', '')
         setValue('uni', '')
+        setUniChanged(false)
     }
     const {
         isPending,
@@ -47,6 +49,12 @@ const UniApp1 = () => {
         queryFn: () => axios.get(backendUrl).then((res) => res.data),
     })
     if (loadError) return 'University list loading error: ' + loadError.message
+    const customOnChange = (event: React.SyntheticEvent, value: any, reason: string, details: any) => {
+        // console.log('customOnChange(): reason:', reason, ', value: ', value)
+        // console.log('customOnChange(): uni value:', getValues('uni'))
+        setUniChanged(true)
+    }
+
     return (
         <div className="UniAppContainer">
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -94,37 +102,45 @@ const UniApp1 = () => {
                                 message: 'Max length is 100 chars',
                             },
                         }}
-                        render={({ field }) => (
-                            <Autocomplete
-                                openOnFocus
-                                selectOnFocus
-                                value={getValues('uni')}
-                                options={data.map((option: any) => option.name)}
-                                isOptionEqualToValue={(option: any, value: any) => {
-                                    return option === value
-                                }}
-                                getOptionLabel={(option: any) => {
-                                    if (typeof option === 'string') {
-                                        setValue('uni', option)
-                                    }
-                                    return option
-                                }}
-                                renderInput={(params) => (
-                                    <TextField
-                                        variant="standard"
-                                        {...params}
-                                        label="University"
-                                        helperText={!!errors.uni && errors.uni.message}
-                                        error={!!errors.uni}
-                                    />
-                                )}
-                                // {...field}
-                            />
-                        )}
+                        render={({ field, fieldState, formState }) => {
+                            // console.log('Controller(): render(): field: ', field, ', get value: ', getValues('uni'))
+                            return (
+                                <Autocomplete
+                                    openOnFocus
+                                    selectOnFocus
+                                    handleHomeEndKeys
+                                    value={uniChanged ? field.value : ''}
+                                    onChange={customOnChange}
+                                    onKeyDown={(e) => {
+                                        setValue('uni', getValues('uni') + e.key)
+                                        // console.log('onKeyDown(): e:', e.key, ', value:', getValues('uni'))
+                                    }}
+                                    options={data.map((option: any) => option.name)}
+                                    isOptionEqualToValue={(option: any, value: any) => {
+                                        return option === value
+                                    }}
+                                    getOptionLabel={(option: any) => {
+                                        if (typeof option === 'string') {
+                                            setValue('uni', option)
+                                        }
+                                        return option
+                                    }}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            variant="standard"
+                                            {...params}
+                                            label="University"
+                                            helperText={!!errors.uni && errors.uni.message}
+                                            error={!!errors.uni}
+                                        />
+                                    )}
+                                />
+                            )
+                        }}
                     />
                 )}
                 <div className="UniAppSubmitButton">
-                    <Button variant="contained" type="submit" ref={submitRef}>
+                    <Button variant="contained" type="submit">
                         Submit
                     </Button>
                 </div>
