@@ -2,10 +2,11 @@ import React, { useContext, useRef } from 'react'
 import { useForm, Controller, SubmitHandler } from 'react-hook-form'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import { Autocomplete, Button, TextField } from '@mui/material'
+import { Button, TextField } from '@mui/material'
 
 import { UniAppContext } from './UniAppProvider'
 import { Alert } from './Alert'
+import UniCombo from './UniCombo'
 import './UniApp.css'
 
 const backendUrl =
@@ -17,7 +18,7 @@ interface IUniAppFormInputs {
     name: string
     uni: string
 }
-const UniApp = () => {
+const UniApp2 = () => {
     const { state, actions } = useContext(UniAppContext)
     const submitRef = useRef(null)
     const {
@@ -32,11 +33,14 @@ const UniApp = () => {
         },
     })
     const onSubmit: SubmitHandler<IUniAppFormInputs> = (formData) => {
-        const uniName = data[formData.uni].name
-        console.log('onSubmit(): form data:', formData, ', uni name:', uniName)
-        actions.setInfo({ name: formData.name, uni: uniName })
-        setValue('name', '')
-        setValue('uni', '')
+        // console.log('onSubmit(): form data:', formData, ', uni name:', formData.uni)
+        if (data.map((option: any) => option.name).includes(formData.uni)) {
+            actions.setInfo({ name: formData.name, uni: formData.uni })
+            setValue('name', '')
+            setValue('uni', '')
+        } else {
+            actions.setInfo('Non-existing university: ' + formData.uni)
+        }
     }
     const {
         isPending,
@@ -47,6 +51,8 @@ const UniApp = () => {
         queryFn: () => axios.get(backendUrl).then((res) => res.data),
     })
     if (loadError) return 'University list loading error: ' + loadError.message
+    // console.log('render(): errors:', errors)
+
     return (
         <div className="UniAppContainer">
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -67,6 +73,12 @@ const UniApp = () => {
                     render={({ field }) => (
                         <TextField
                             style={{ width: '100%' }}
+                            sx={{
+                                '& .MuiInputBase-input': {
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                },
+                            }}
                             variant="standard"
                             placeholder="Name"
                             helperText={!!errors.name ? errors.name.message : ''}
@@ -87,31 +99,25 @@ const UniApp = () => {
                                 value: 100,
                                 message: 'Max length is 100 chars',
                             },
+                            validate: {
+                                nameUni: (v) => {
+                                    const items = data
+                                        .map((option: any) => option.name)
+                                        .filter((item: String) => item.toLowerCase().includes(v.trim().toLowerCase()))
+                                    if (items.length) {
+                                        return true
+                                    } else {
+                                        return 'Non-existing university'
+                                    }
+                                },
+                            },
                         }}
                         render={({ field }) => (
-                            <Autocomplete
-                                openOnFocus
-                                selectOnFocus
-                                options={data.map((option: any) => option.name)}
-                                isOptionEqualToValue={(option: any, value: any) => {
-                                    return option.name === value.name
-                                }}
-                                getOptionLabel={(option: any) => {
-                                    if (typeof option === 'number') {
-                                        return data[option].name
-                                    } else {
-                                        return option
-                                    }
-                                }}
-                                renderInput={(params) => (
-                                    <TextField
-                                        variant="standard"
-                                        {...params}
-                                        label="University"
-                                        helperText={!!errors.uni && errors.uni.message}
-                                        error={!!errors.uni}
-                                    />
-                                )}
+                            <UniCombo
+                                label="University"
+                                helperText={!!errors.uni ? errors.uni.message : ''}
+                                error={!!errors.uni}
+                                data={data.map((option: any) => option.name)}
                                 {...field}
                             />
                         )}
@@ -128,4 +134,4 @@ const UniApp = () => {
     )
 }
 
-export default UniApp
+export default UniApp2

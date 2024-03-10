@@ -39,10 +39,17 @@ function applicationReducer(state: IState, action: IAction): IState {
 const createApplicationActions = (dispatch: any) => ({
     setInfo(info: any) {
         if (!!info) {
-            dispatch({
-                type: 'setInfo',
-                payload: `${info.name} has been applied to ${info.uni}`,
-            })
+            if (typeof info === 'string') {
+                dispatch({
+                    type: 'setInfo',
+                    payload: info,
+                })
+            } else {
+                dispatch({
+                    type: 'setInfo',
+                    payload: `${info.name} has been applied to ${info.uni}`,
+                })
+            }
         } else {
             dispatch({ type: 'setInfo', payload: undefined })
         }
@@ -58,9 +65,5 @@ export const UniAppProvider = ({ children }: { children: any }) => {
     const [state, dispatch] = useReducer(applicationReducer, initialState)
     const actions = createApplicationActions(dispatch)
 
-    return (
-        <UniAppContext.Provider value={{ state, actions }}>
-            {children}
-        </UniAppContext.Provider>
-    )
+    return <UniAppContext.Provider value={{ state, actions }}>{children}</UniAppContext.Provider>
 }
