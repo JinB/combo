@@ -34,7 +34,7 @@ const UniApp1 = () => {
         },
     })
     const onSubmit: SubmitHandler<IUniAppFormInputs> = (formData) => {
-        console.log('onSubmit(): form data:', formData, ', uni name:', formData.uni)
+        // console.log('onSubmit(): form data:', formData, ', uni name:', formData.uni)
         actions.setInfo({ name: formData.name, uni: formData.uni })
         setValue('name', '')
         setValue('uni', '')

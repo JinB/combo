@@ -16,16 +16,16 @@ function App() {
                 Reactive component to handle simple application to some Czech university.
             </header>
             <div className="body">
-                <header className="header3">Demo 1: MUI Autocomplete</header>
-                <QueryClientProvider client={queryClient}>
-                    <UniAppProvider>
-                        <UniApp1 />
-                    </UniAppProvider>
-                </QueryClientProvider>
-                <header className="header3">Demo 2: Floating UI</header>
+                <header className="header3">Demo 1: Floating UI</header>
                 <QueryClientProvider client={queryClient}>
                     <UniAppProvider>
                         <UniApp2 />
+                    </UniAppProvider>
+                </QueryClientProvider>
+                <header className="header3">Demo 2: MUI Autocomplete</header>
+                <QueryClientProvider client={queryClient}>
+                    <UniAppProvider>
+                        <UniApp1 />
                     </UniAppProvider>
                 </QueryClientProvider>
             </div>
